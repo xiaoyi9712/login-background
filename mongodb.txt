@@ -1,0 +1,147 @@
+**-----####mongodb数据库
+
+下载mongodb数据库
+配置mongodb环境变量
+cmd窗口输入mongo查看对应的版本号
+
+启动mongodb数据库
+
+在cmd窗口mongod --dbpath 文件的路径 --port 端口号（默认27017）
+
+数据库启动之后不要关闭cmd窗口，要操作数据库需要再开一个cmd窗口输入mongo 如果端口号改变过，就mongo --port 端口号
+
+mongodb的一些指令：
+原生mongo指令操作数据库
+ 
+增查方法
+
+  show dbs //展示所有的数据库
+  use 数据库名字 //新建数据库,连接到数据库
+  show tables/show collections//展示连接数据库的集合
+  db.集合名字.insert({name:"阿飞"})//往刚刚的数据库填充数据,只能是数组或者对象
+  db.集合名字.find()//查找集合中的数据(尽可能多)
+  db.集合名字.findOne()//查找集合中的一个数据
+  db.集合名字.find().limit(2)//查找集合中的数据(2个)限制查找数据的数量使用limit函数
+  db.集合名字.find({name:"heaven"}).skip(2)//跳过前两条筛选的数据,拿后面的数据
+  db.集合名字.find({name:"heaven"}).count()//得到数据的个数
+  
+
+ 删除方法
+  db.集合名字.remove({name:"heaven"},1)//删除集合中的一个数据(默认尽可能多删)
+
+ 改
+  db.集合.update(
+		{name:"heaven"},
+		{$set{name:"海文"}}
+		)//只能更新一个数据
+  
+  db.集合.update(
+		{name:"heaven"},
+		{$set{name:"海文"}},
+		{multi:true}
+		)//更新多个数据
+
+
+****----####
+*****----###
+**---*####在node中操作mongo数据库,不需要在cmd命令行中操作
+
+
+
+npm i init -y创建pack.json默认文件
+npm i mongoose,下载包
+
+const mongoose=require("mongoose")//引入模块
+
+//连接数据库student,如果没有这个数据库会自动创建
+mongoose.connect("mongodb://localhost:27017/student",{
+	useNewUrlParser:true,
+	useUnifiedTopology:true
+}).then(async ()=>{
+	log("数据库连接成功")
+	
+	
+    //增方法
+      //先定义student这个数据库中集合的数据格式 banji121
+	let studentSchema = new mongoose.Schema({
+	name:String,
+	weight:Number,
+	height:Number
+    })
+
+      //让banji121这个集合应用studentSchema
+     let studentS = mongoose.model("banji121",studentSchema)
+
+    //往集合里插入数据
+     studentS.create({
+	name:"海文",
+	weight:67.5,
+	height:180
+     })
+
+
+	保存数据:
+	new studentS({
+	   name:"海文",
+	   weight:67.5,
+	   height:180
+	}).save()
+    
+     height:{//限制
+	type:Number,
+	default:175//默认175
+     };
+
+     weight:{
+	type:Number
+     	required:true//必须有这个属性
+     }
+	
+     //查方法
+     const result = await studentS.find({name:"heaven"})
+	log(result);
+     //因为find函数返回的是台promise机器,所以await async
+     ****find 的 result返回的是数据本身
+
+     //返回的是个数,数量
+     const result = 
+	await studentS.find({name:heaven}).countDocuments()
+	log(result);
+    //也可以用.limit(2)函数限制查找的数量
+    //也可以用ID查找,返回的是是数据本身
+    const result8 = await studentS.findById("123456")
+    
+    //把找到的数据倒着排序
+    const result9 =
+        await studentS.find({name:"heaven"}).sort(height:1或-1)    
+   
+
+
+     //删除方法
+     const result1 = await studentS.deleteOne({name:"heaven"}) //
+     删除的一个,result1返回的是{n:1,ok:1,deletedCount:1} 
+
+     const result2 = await studentS.deleteMany({name:"heaven"})//
+     删除的多个,result1返回的是{n:个数,ok:1,deletedCount:个数}     
+
+
+     //更新方法
+     const result3 = 
+                    await studentS
+                    .updateMany(
+		    {name:"heaven"},{$set{name:"海文"}}
+                    ) //
+     更新的多个,result1返回的是{n:数量,ok:1,deletedCount:数量}
+
+     同理updateOne
+
+
+
+
+
+
+}).catch({
+    log("数据库连接失败")
+})
+
+
