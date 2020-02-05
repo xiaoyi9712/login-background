@@ -1,0 +1,160 @@
+vue-cli安装.
+
+
+cmd命令窗口输入
+1 npm install vue-cli -g 回车  //就全局安装好了vue-cli
+
+
+vue init webpack 项目名  //使用webpack构建自己的项目
+
+
+Project name  按enter键
+Project description   按enter键
+Author   按enter键
+Vue build  按enter键
+Install vue-router  是否要安装Vue-router,一般要.按enter键
+Use ESlint to lint your code 不需要按照严格的代码书写规范  选择NO
+Set up unit tests 不需要要单元测试 选择NO
+Setup e2e tests with Nightwatch 不需要e2e单元测试  选择NO
+Should we run npm install for you...  选择NPM
+
+
+cd到...
+npm run dev
+
+vue项目进行中
+
+main.js入口文件
+@符号表示src的绝对路径
+HomeTitle 匹配 <home-title/>
+
+只要是通过js外链脚本引入的都可以通过npm来安装
+npm install axios --save在生产环境中需要 下载axios包
+import axios from "axios" 在main.js中导入axios
+
+然后把axios注入到Vue原型中:
+ Vue.prototype.$axios = axios,
+ 注入好之后每个组件都可以使用axios函数了,
+ axios函数返回的是promise对象,一旦返回数据就出发.then(res)函数
+
+跨域解决办法
+proxyTable网上复制代码,配置config下面的index.js,里面的proxyTable.
+修改webpack里面的东西后要重启服务
+
+const bodyParser = require("body-parser")
+body-parser包,获取post数据 express是req.body获取
+
+//express获取post数据需要body-parser包,这是设置:
+app.use(bodyParser.urlencoded({
+    extended:true
+}));
+app.use(bodyParser.json())
+
+
+在config/index.js  line: 25行可以设置项目启动的端口号
+
+图片403问题解决办法:
+搜索微信图文防盗链meta  或直接<meta name="referrer" content="never">
+
+生成pack.json文件 npm init -y
+
+elementUI框架网站
+使用方法
+1 npm install element-ui -save 安装
+2 main.js文件中import 导入import ElementUI from 'element-ui';
+		import 'element-ui/lib/theme-chalk/index.css';
+
+mongodb 数据库
+
+开启数据库: cmd   mongod --dbpath 路径 --port 27019
+
+mongoose.connect("mongodb://localhost:27017/vuex",{
+	useNewUrlParser:true,
+	useUnifiedTopology: true
+},err=>{})连接数据库
+
+users.js文件夹内:
+const mongoose = require("mongoose")
+
+const userSchema = new mongoose.Schema({
+	username:String,
+	password:String,
+	age:Number
+})
+module.exports = mongoose.model("users",userSchema)
+
+随机取整20~40;   age:~~(Math.random()*20+20)//20~40之间
+
+this.$router.push("/admin")js跳转路由 编程式导航
+this.$router.push({
+    path:"/admin",
+    Parma:{
+      a:10
+    }
+})
+
+Vuex
+
+vuex是组件之间通讯的
+src文件夹下创建一个store文件夹,
+然后在store文件夹里面创建一个index.js文件
+文件里面导入
+
+import Vue from "vue"
+import Vuex from  "vuex"
+import Router from "vue-router"
+Vue.use(Vuex)
+export default new Vuex.Store({//仓库
+	state:{//存放所有组件都可以使用的数据
+	 loginUser:"",
+	 userList:[]	
+	},
+	mutations:{
+	  saveloginUser(state,value){
+	      state.loginUser = value
+	  },
+	  saveUserList(state,users){
+	      state.userList = users
+	  }
+	},
+	actions:{//放置异步数据
+	  getUserList(cxt){
+		
+  return new Promise((res,rej)=>{
+	axios.get("/api/userlist").then(users=>{
+		   //要改数据先到mutations里去然后和mutations一样
+		   cxt.commit("saveUserList",users.data)
+			res()
+		})
+	  }
+	},
+
+	getters:{//计算state中的属性
+	  
+	}
+})   
+
+main.js里面要引入store,  import store from "./store",
+再往根组件中注入store;和router完全一样
+
+把username的值通过vuex的mutations属性的saveloginUser函数处理
+要修改store(仓库)中的state数据 必须触发函数mutations中的对应函数在函数内部修改state的数据
+this.$store.commit("saveloginUser",this.ruleFrom.username)
+
+{{$store.state.loginUser}}
+this.$store.dispatch("getUserList").then(()=>{
+	log(this.$store.state.userList)//就可以拿到数据了
+})
+
+filter过滤数组
+
+//把登陆的用户存储到本地
+localStorage.setItem("user",value)
+
+
+//获取本地保存的数据
+localStorage.getItem("user")
+
+//路由重新定向
+redirect:"/userlist"
+
